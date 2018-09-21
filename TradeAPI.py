@@ -35,7 +35,7 @@ class TradeAPI(object):
         return json_response
 
 #дополнил/ниже всё не правильно(возможно):)
-    def WithdrawCoins(self, coinName:str, amount:float, address:str):#метод вывода денег, подаётся валюта, сумма, адрес
+    def WithdrawCoins(self, coinName: str, amount: float, address: str):#метод вывода денег, подаётся валюта, сумма, адрес
         data = {
             'method': 'WithdrawCoinsToAddress',
             'coinName': coinName,
@@ -43,13 +43,12 @@ class TradeAPI(object):
             'address': address
         }
 
-        response = requests.post(url = self.api_url, headers = self.get_headers(data['method']),
-                                 data = data['coinName','amount','address'] )
+        response = requests.post(url = self.api_url, headers = self.get_headers(data),data = data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def Trade(self, pair:str, type:str, rate:float,amount:float):#валюта, тип операции, курс,количество
+    def Trade(self, pair: str, type: str, rate: float, amount: float):#валюта, тип операции, курс,количество
         data = {
             'method': 'Trade',
             'pair': pair,
@@ -58,50 +57,50 @@ class TradeAPI(object):
             'amount': amount
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['pair','type','rate','amount'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),
+                                 data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def ActiveOrders(self, pair:str):#возвращает список активных ордеров
+    def ActiveOrders(self, pair: str):#возвращает список активных ордеров
         data = {
             'method': 'ActiveOrders',
             'pair': pair
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['pair'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),
+                                 data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def OrderInfo(self, order_id:int):#подробная информация об ордере
+    def OrderInfo(self, order_id: int):#подробная информация об ордере
         data = {
             'method': 'OrderInfo',
             'order_id': order_id
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['order_id'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),
+                                 data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def CancelOrder(self, order_id:int):#отменяет ордер
+    def CancelOrder(self, order_id: int):#отменяет ордер
         data = {
             'method': 'CancelOrder',
             'order_id': order_id
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['order_id'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),
+                                 data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def TradeHistory(self, pair,  fro:int = 0, count:int = 1000, from_id:int = 0, end_id:int = 10000, order:str = 'DESC',
-                     since:int = 0, end:float = 10000):
+    def TradeHistory(self, pair,  fro: int = 0, count: int = 1000, from_id: int = 0, end_id: int = 10000, order: str = 'DESC',
+                     since: int = 0, end: float = 10000):
         #Возвращает историю сделок. Переменные, разные параметры вывода, значения по умолчанию(с сайта)
         data = {
             'method': 'TradeHistory',
@@ -116,47 +115,43 @@ class TradeAPI(object):
         }
 
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['pair', 'fro', 'count', 'from_id', 'end_id', 'order', 'since', 'end'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def GetDepositAddress(self, coinName:str, need_new:bool = 0): #Метод возвращает адрес пополнения.
+    def GetDepositAddress(self, coinName: str, need_new: bool = 0): #Метод возвращает адрес пополнения.
         data = {
             'method': 'GetDepositAddress',
             'coinName': coinName,
             'need_new': need_new
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['coinName','need_new'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data),data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def CreateYobicode(self,currency:str,amount:float):#Метод предназначен для создания  Yobicodes (купонов).
+    def CreateYobicode(self,currency: str,amount: float):#Метод предназначен для создания  Yobicodes (купонов).
         data = {
             'method': 'CreateYobicode',
             'currency': currency,
             'amount': amount
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['currency', 'amount'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def RedeemYobicode(self,coupon:str):#Метод предназначен для погашения Yobicodes (купонов).
+    def RedeemYobicode(self,coupon: str):#Метод предназначен для погашения Yobicodes (купонов).
         data = {
             'method': 'RedeemYobicode',
             'coupon': coupon,
 
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data['method']),
-                                 data=data['coupon'])
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
