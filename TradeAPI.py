@@ -1,13 +1,12 @@
 from urllib.parse import urlencode
-import hmac
-import hashlib
-import requests
-import json
+import hmac, hashlib
+import requests, json
+from exceptions import ConnectionFailed
 
 class TradeAPI(object):
     def __init__(self, key: str, secret_key: str):
         self.api_url = "https://yobit.net/tapi/"
-        # Сreate them in an account
+        # Сreate it in our account
         self.key = key
         self.secret_key = secret_key
 
@@ -24,7 +23,8 @@ class TradeAPI(object):
             'Key': self.key,
         }
 
-    def get_info(self):#Метод возвращает информацию о балансах пользователя и привилегиях API-ключа, время сервера.
+    def get_info(self):
+        # Return account info, server time etc
         data = {
             "method": "getInfo",
         }
@@ -34,8 +34,8 @@ class TradeAPI(object):
 
         return json_response
 
-#дополнил/ниже всё не правильно(возможно):)
-    def WithdrawCoins(self, coinName: str, amount: float, address: str):#метод вывода денег, подаётся валюта, сумма, адрес
+    def WithdrawCoins(self, coinName: str, amount: float, address: str):
+        # Transfer money to your wallet [adress]
         data = {
             'method': 'WithdrawCoinsToAddress',
             'coinName': coinName,
@@ -43,12 +43,13 @@ class TradeAPI(object):
             'address': address
         }
 
-        response = requests.post(url = self.api_url, headers = self.get_headers(data),data = data)
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def Trade(self, pair: str, type: str, rate: float, amount: float):#валюта, тип операции, курс,количество
+    def Trade(self, pair: str, type: str, rate: float, amount: float):
+        # pair - валюта, type - тип операции, rate - курс, amount - количество
         data = {
             'method': 'Trade',
             'pair': pair,
@@ -57,70 +58,67 @@ class TradeAPI(object):
             'amount': amount
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data),
-                                 data=data)
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def ActiveOrders(self, pair: str):#возвращает список активных ордеров
+    def ActiveOrders(self, pair: str):
+        # Return active orders list
         data = {
             'method': 'ActiveOrders',
             'pair': pair
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data),
-                                 data=data)
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def OrderInfo(self, order_id: int):#подробная информация об ордере
+    def OrderInfo(self, order_id: int):
+        # Specific order info
         data = {
             'method': 'OrderInfo',
             'order_id': order_id
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data),
-                                 data=data)
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def CancelOrder(self, order_id: int):#отменяет ордер
+    def CancelOrder(self, order_id: int):
         data = {
             'method': 'CancelOrder',
             'order_id': order_id
         }
 
-        response = requests.post(url=self.api_url, headers=self.get_headers(data),
-                                 data=data)
+        response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def TradeHistory(self, pair,  fro: int = 0, count: int = 1000, from_id: int = 0, end_id: int = 10000, order: str = 'DESC',
-                     since: int = 0, end: float = 10000):
-        #Возвращает историю сделок. Переменные, разные параметры вывода, значения по умолчанию(с сайта)
+    def TradeHistory(self, pair, fro=0, count=1000, from_id=0, end_id=10000,
+                     order='DESC', since=0, end=10000):
         data = {
             'method': 'TradeHistory',
             'pair': pair,
-            'fro': fro, #номер сделки, с которой начинать вывод
-            'count': count,#количество сделок для вывода
-            'from_id': from_id,#ID сделки, с которой начинать вывод
-            'end_id': end_id,# ID сделки, на которой заканчивать вывод
-            'order': order,#сортировка при выводе (значения: ASC или DESC
-            'since': since,#с какого времени начинать вывод
-            'end':end#на каком времени заканчивать вывод
+            'fro': fro,         # номер сделки, с которой начинать вывод
+            'count': count,     # количество сделок для вывода
+            'from_id': from_id, # ID сделки, с которой начинать вывод
+            'end_id': end_id,   # ID сделки, на которой заканчивать вывод
+            'order': order,     # сортировка при выводе (значения: ASC или DESC
+            'since': since,     # с какого времени начинать вывод
+            'end':end           # на каком времени заканчивать вывод
         }
-
 
         response = requests.post(url=self.api_url, headers=self.get_headers(data),data=data)
         json_response = json.loads(response.text)
 
         return json_response
 
-    def GetDepositAddress(self, coinName: str, need_new: bool = 0): #Метод возвращает адрес пополнения.
+    def GetDepositAddress(self, coinName, need_new: bool = 0):
+        # Return адрес пополнения
         data = {
             'method': 'GetDepositAddress',
             'coinName': coinName,
@@ -132,7 +130,8 @@ class TradeAPI(object):
 
         return json_response
 
-    def CreateYobicode(self,currency: str,amount: float):#Метод предназначен для создания  Yobicodes (купонов).
+    def CreateYobicode(self, currency: str, amount: float):
+        # Creating Yobicodes (coupons)
         data = {
             'method': 'CreateYobicode',
             'currency': currency,
@@ -144,11 +143,11 @@ class TradeAPI(object):
 
         return json_response
 
-    def RedeemYobicode(self,coupon: str):#Метод предназначен для погашения Yobicodes (купонов).
+    def RedeemYobicode(self,coupon: str):
+        # Using Yobicodes (coupons)
         data = {
             'method': 'RedeemYobicode',
             'coupon': coupon,
-
         }
 
         response = requests.post(url=self.api_url, headers=self.get_headers(data), data=data)
